@@ -1,8 +1,9 @@
 import hashlib
+from services.db_connection import DatabaseConnection
 
 class AuthService:
     def __init__(self):
-        self.users_mock_db = []
+        self.db = DatabaseConnection()
 
     def hash_password(self, password):
         return hashlib.sha256(password.encode()).hexdigest()
@@ -11,28 +12,37 @@ class AuthService:
         if not email.endswith("@ynov.com"):
             raise ValueError("L'adresse mail doit se terminer par @ynov.com")
 
-        for user in self.users_mock_db:
-            if user['email'] == email:
-                raise ValueError("Cet email est deja utilise")
-
         hashed_password = self.hash_password(password)
         
-        new_user = {
-            "nom": nom,
-            "prenom": prenom,
-            "email": email,
-            "password": hashed_password,
-            "date_naissance": date_naissance,
-            "age": age,
-            "cursus": cursus,
-            "cv_filename": cv_filename
-        }
-        self.users_mock_db.append(new_user)
-        return new_user
+        conn = self.db.get_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        try:
+            cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
+            if cursor.fetchone():
+                raise ValueError("Cet email est deja utilise")
+
+            query = """
+                INSERT INTO users (nom, prenom, email, password, date_naissance, age, cursus, cv_filename)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(query, (nom, prenom, email, hashed_password, date_naissance, age, cursus, cv_filename))
+            conn.commit()
+            
+            return {"email": email}
+        finally:
+            cursor.close()
+            conn.close()
 
     def login_user(self, email, password):
         hashed_password = self.hash_password(password)
-        for user in self.users_mock_db:
-            if user['email'] == email and user['password'] == hashed_password:
-                return user
-        return None
+        
+        conn = self.db.get_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        try:
+            cursor.execute("SELECT * FROM users WHERE email = %s AND password = %s", (email, hashed_password))
+            return cursor.fetchone()
+        finally:
+            cursor.close()
+            conn.close()
