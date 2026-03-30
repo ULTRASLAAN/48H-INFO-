@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template
 from flask_cors import CORS
 from routes.auth_routes import AuthRoutes
@@ -14,6 +15,8 @@ class SocialNetworkApp:
     def __init__(self):
         self.app = Flask(__name__)
         CORS(self.app)
+        self.app.config['UPLOAD_FOLDER'] = 'uploads'
+        os.makedirs(self.app.config['UPLOAD_FOLDER'], exist_ok=True)
         self.setup_blueprints()
         self.setup_frontend_routes()
 

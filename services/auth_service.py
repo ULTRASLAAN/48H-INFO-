@@ -7,7 +7,7 @@ class AuthService:
     def hash_password(self, password):
         return hashlib.sha256(password.encode()).hexdigest()
 
-    def register_user(self, nom, prenom, email, password, date_naissance, age, cursus):
+    def register_user(self, nom, prenom, email, password, date_naissance, age, cursus, cv_filename=None):
         if not email.endswith("@ynov.com"):
             raise ValueError("L'adresse mail doit se terminer par @ynov.com")
 
@@ -24,7 +24,8 @@ class AuthService:
             "password": hashed_password,
             "date_naissance": date_naissance,
             "age": age,
-            "cursus": cursus
+            "cursus": cursus,
+            "cv_filename": cv_filename
         }
         self.users_mock_db.append(new_user)
         return new_user

@@ -27,6 +27,8 @@ button:hover { background: #0056b3; }
         <input type="date" id="regDate">
         <input type="number" id="regAge" placeholder="Age">
         <input type="text" id="regCursus" placeholder="Cursus">
+        <label for="regCv" style="display:block; margin-top:10px; font-size:14px; color:#555;">CV (PDF optionnel) :</label>
+        <input type="file" id="regCv" accept=".pdf">
         <button onclick="register()">S'inscrire</button>
     </div>
 
@@ -52,21 +54,24 @@ function printLog(data) {
 }
 
 async function register() {
-    const payload = {
-        nom: document.getElementById('regNom').value,
-        prenom: document.getElementById('regPrenom').value,
-        email: document.getElementById('regEmail').value,
-        password: document.getElementById('regPass').value,
-        date_naissance: document.getElementById('regDate').value,
-        age: document.getElementById('regAge').value,
-        cursus: document.getElementById('regCursus').value
-    };
+    const formData = new FormData();
+    formData.append('nom', document.getElementById('regNom').value);
+    formData.append('prenom', document.getElementById('regPrenom').value);
+    formData.append('email', document.getElementById('regEmail').value);
+    formData.append('password', document.getElementById('regPass').value);
+    formData.append('date_naissance', document.getElementById('regDate').value);
+    formData.append('age', document.getElementById('regAge').value);
+    formData.append('cursus', document.getElementById('regCursus').value);
+    
+    const cvFile = document.getElementById('regCv').files[0];
+    if (cvFile) {
+        formData.append('cv', cvFile);
+    }
     
     try {
         const res = await fetch(`${API_URL}/auth/register`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: formData
         });
         const data = await res.json();
         printLog(data);

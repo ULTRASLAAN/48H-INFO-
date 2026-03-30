@@ -1,4 +1,6 @@
-from flask import Blueprint, request, jsonify
+import os
+from flask import Blueprint, request, jsonify, current_app
+from werkzeug.utils import secure_filename
 from services.auth_service import AuthService
 
 class AuthRoutes:
@@ -10,11 +12,19 @@ class AuthRoutes:
     def register_routes(self):
         @self.blueprint.route('/api/auth/register', methods=['POST'])
         def register():
-            data = request.get_json()
+            data = request.form if request.form else request.get_json()
+            cv_file = request.files.get('cv')
+
             required_fields = ['nom', 'prenom', 'email', 'password', 'date_naissance', 'age', 'cursus']
             
             if not data or not all(field in data for field in required_fields):
                 return jsonify({"erreur": "Tous les champs sont requis"}), 400
+            
+            cv_filename = None
+            if cv_file and cv_file.filename.endswith('.pdf'):
+                cv_filename = secure_filename(cv_file.filename)
+                cv_path = os.path.join(current_app.config['UPLOAD_FOLDER'], cv_filename)
+                cv_file.save(cv_path)
             
             try:
                 user = self.auth_service.register_user(
@@ -24,9 +34,10 @@ class AuthRoutes:
                     data['password'],
                     data['date_naissance'],
                     data['age'],
-                    data['cursus']
+                    data['cursus'],
+                    cv_filename
                 )
-                return jsonify({"message": "Inscription reussie", "email": user['email']}), 201
+                return jsonify({"message": "Inscription reussie", "email": user['email'], "cv": cv_filename}), 201
             except ValueError as e:
                 return jsonify({"erreur": str(e)}), 400
 
