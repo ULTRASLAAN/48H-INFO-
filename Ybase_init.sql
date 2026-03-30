@@ -74,5 +74,11 @@ CREATE TABLE IF NOT EXISTS users (
     date_naissance DATE,
     age INT,
     cursus VARCHAR(100),
+    phone_number VARCHAR(20),
+    bio TEXT,
+    is_admin BOOLEAN DEFAULT FALSE,
+    score DECIMAL(3,2) DEFAULT 0.0,
+    date_last_login DATETIME,
+    is_verified BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
