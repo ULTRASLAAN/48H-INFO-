@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ynov Connect - Vie Etudiante</title>
+<link rel="stylesheet" href="styles/main.css?v=20260330b">
+</head>
+<body>
+<header class="header">
+    <div class="container header-row">
+        <div class="logo">Ynov <span>Connect</span></div>
+        <nav class="nav" aria-label="Navigation principale">
+            <a href="#" data-page="home">Accueil</a>
+            <a href="#" data-page="feed">Fil d'actualite</a>
+            <a href="#" data-page="chat">Chat</a>
+            <a href="#" data-page="vente">Vente</a>
+            <a href="#" data-page="achat">Achat</a>
+            <a href="#" data-page="profil">Profils</a>
+            <a href="#" data-page="ynov">Partie Ynov</a>
+        </nav>
+        <div class="header-account">
+            <button class="btn btn-light account-login-btn" id="openLoginBtn" type="button">Connexion</button>
+            <div class="account-chip" id="accountChip" hidden>
+                <img id="accountAvatar" class="account-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&q=80&auto=format&fit=crop" alt="Photo de profil">
+                <div class="account-meta">
+                    <strong id="accountName">-</strong>
+                    <span id="accountEmail">-</span>
+                </div>
+                <button class="btn btn-light account-logout-btn" id="logoutBtn" type="button">Deconnexion</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main>
+    <section class="hero" id="home">
+        <div class="container hero-grid">
+            <div class="hero-main">
+                <span class="kicker">Plateforme vie etudiante</span>
+                <h1>Communication, entraide, services, et tout l'univers Ynov.</h1>
+                <p>
+                    Une seule page pour discuter entre etudiants, creer des groupes,
+                    vendre ou acheter des produits, gerer vos profils et suivre toutes
+                    les infos campus.
+                </p>
+                <div class="cta-row">
+                    <a class="btn btn-primary" href="#" data-page="chat">Lancer un chat</a>
+                    <a class="btn btn-light" href="#" data-page="vente">Publier une annonce</a>
+                </div>
+            </div>
+            <aside class="hero-side">
+                <h3>En direct aujourd'hui</h3>
+                <p>7 annonces importantes, 3 evenements club et 11 nouvelles annonces achat/vente.</p>
+                <div class="chips">
+                    <span>Urgences</span>
+                    <span>Bons plans</span>
+                    <span>Stages</span>
+                    <span>Associations</span>
+                </div>
+            </aside>
+        </div>
+        <div class="container stats">
+            <div class="stat"><strong>12k+</strong>membres actifs</div>
+            <div class="stat"><strong>36</strong>groupes etudiants</div>
+            <div class="stat"><strong>98%</strong>de posts vus sous 24h</div>
+            <div class="stat"><strong>1 hub</strong>pour toute la vie Ynov</div>
+        </div>
+        <div class="container section">
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>News d'Ynov</h3>
+                    <span class="tag">Officiel</span>
+                </div>
+                <div class="news-list">
+                    <div class="news-item"><h4>Nouveau partenariat entreprise</h4><span class="meta">Ynov signe un partenariat avec 12 startups tech locales.</span></div>
+                    <div class="news-item"><h4>Calendrier examens mis a jour</h4><span class="meta">Consultez les nouvelles salles et horaires sur l'intranet.</span></div>
+                    <div class="news-item"><h4>Ouverture de la semaine internationale</h4><span class="meta">Conferences, workshops et rencontres alumni.</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section container" id="feed">
+        <h2>Fil d'actualite + Statuts personnalises</h2>
+        <p class="lead">Partagez vos infos en temps reel et affichez votre statut personnel pour la communaute.</p>
+        <div class="layout-2">
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Fil d'actualite</h3>
+                    <span class="tag">Campus</span>
+                </div>
+                <div class="feed-controls" aria-label="Filtres du fil">
+                    <button class="tab active" type="button" data-filter="all">Tout</button>
+                    <button class="tab" type="button" data-filter="urgence">Urgence</button>
+                    <button class="tab" type="button" data-filter="bon-plan">Bon plan</button>
+                    <button class="tab" type="button" data-filter="event">Evenement</button>
+                </div>
+                <div class="feed-list" id="feedList">
+                    <div class="feed-item" data-type="urgence">Salle B203 fermee aujourd'hui, cours bascule en visio.<span class="meta">Administration - il y a 15 min</span></div>
+                    <div class="feed-item" data-type="bon-plan">Vente de calculatrice Casio Graph 35+ a 35 EUR.<span class="meta">Imane M1 - il y a 42 min</span></div>
+                    <div class="feed-item" data-type="event">Afterwork BDE jeudi 19h au foyer etudiant.<span class="meta">BDE - il y a 1 h</span></div>
+                </div>
+                <form id="postForm">
+                    <div class="inline-2">
+                        <input id="postAuthor" type="text" placeholder="Nom / promo" required>
+                        <select id="postType" required>
+                            <option value="event">Evenement</option>
+                            <option value="urgence">Urgence</option>
+                            <option value="bon-plan">Bon plan</option>
+                        </select>
+                    </div>
+                    <textarea id="postMessage" placeholder="Publiez une info dans le fil..." required></textarea>
+                    <button class="btn btn-primary" type="submit">Publier</button>
+                </form>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Mon statut personnalise</h3>
+                    <span class="tag">Profil</span>
+                </div>
+                <div class="status-box" id="statusBox">Disponible pour un projet IA ce week-end.</div>
+                <form id="statusForm">
+                    <input id="statusInput" type="text" placeholder="Ex: En revision, reponse ce soir" required>
+                    <button class="btn btn-light" type="submit">Mettre a jour mon statut</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="section container" id="chat">
+        <h2>Chat entre etudiants + Creation de groupes</h2>
+        <p class="lead">Discutez en canal public et creez vos groupes de projet, promo ou association.</p>
+        <div class="layout-2">
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Chat campus</h3>
+                    <span class="tag">Live</span>
+                </div>
+                <div class="chat-shell">
+                    <div class="channels" id="channels">
+                        <button type="button" class="active" data-channel="entraide">#entraide-cours</button>
+                        <button type="button" data-channel="logement">#logement-coloc</button>
+                        <button type="button" data-channel="job">#jobs-stage</button>
+                    </div>
+                    <div>
+                        <div class="chat-list" id="chatList"></div>
+                        <form id="chatForm">
+                            <div class="inline-2">
+                                <input id="chatAuthor" type="text" placeholder="Votre nom" required>
+                                <input id="chatText" type="text" placeholder="Votre message" required>
+                            </div>
+                            <button class="btn btn-primary" type="submit">Envoyer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Creation de groupe</h3>
+                    <span class="tag">Communautes</span>
+                </div>
+                <form id="groupForm">
+                    <input id="groupName" type="text" placeholder="Nom du groupe" required>
+                    <input id="groupGoal" type="text" placeholder="Objectif du groupe" required>
+                    <button class="btn btn-light" type="submit">Creer le groupe</button>
+                </form>
+                <div class="group-list" id="groupList">
+                    <div class="group-item"><h4>Projet Mobile M2</h4><span class="meta">Preparation soutenance de fin de semestre</span></div>
+                    <div class="group-item"><h4>Club Entrepreneuriat</h4><span class="meta">Pitchs, mentors, concours startup</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section container" id="vente">
+        <h2>Page Vente</h2>
+        <p class="lead">Publiez vos objets a vendre et consultez les ventes recentes des etudiants.</p>
+        <div class="layout-2">
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Publier une vente</h3>
+                    <span class="tag">Vente</span>
+                </div>
+                <form id="marketVenteForm">
+                    <input id="marketVenteTitle" type="text" placeholder="Nom du produit" required>
+                    <input id="marketVentePrice" type="text" placeholder="Prix (EUR)" required>
+                    <label for="marketVentePhoto" class="file-upload-trigger">Ajouter une photo du produit</label>
+                    <input id="marketVentePhoto" class="file-upload-input" type="file" accept="image/*">
+                    <textarea id="marketVenteDesc" placeholder="Description rapide" required></textarea>
+                    <button class="btn btn-primary" type="submit">Ajouter la vente</button>
+                </form>
+            </div>
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Objets en vente</h3>
+                    <span class="tag">Annonces</span>
+                </div>
+                <div class="market-list" id="marketListVente">
+                    <div class="market-item" data-market-type="vente"><span class="market-kind vente">Vente</span><h4>Bureau pliable</h4><span class="meta">Etat tres bon - Ideal studio</span><span class="market-price">45 EUR</span></div>
+                    <div class="market-item" data-market-type="vente"><span class="market-kind vente">Vente</span><h4>PC portable Lenovo</h4><span class="meta">16GB RAM, SSD 512GB</span><span class="market-price">390 EUR</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section container" id="achat">
+        <h2>Page Achat Campus</h2>
+        <p class="lead">Une experience d'achat complete: recherche, filtres, tri et panier etudiant.</p>
+
+        <div class="buy-toolbar panel">
+            <input id="buySearch" type="text" placeholder="Rechercher un produit, une marque, un accessoire...">
+            <select id="buyCategory">
+                <option value="all">Toutes les categories</option>
+                <option value="informatique">Informatique</option>
+                <option value="mobilier">Mobilier</option>
+                <option value="cours">Cours & livres</option>
+                <option value="audio">Audio</option>
+            </select>
+            <select id="buySort">
+                <option value="relevance">Tri: pertinence</option>
+                <option value="price-asc">Prix croissant</option>
+                <option value="price-desc">Prix decroissant</option>
+            </select>
+            <div class="buy-price-filter">
+                <label for="buyMaxPrice">Prix max: <strong id="buyMaxPriceValue">800 EUR</strong></label>
+                <input id="buyMaxPrice" type="range" min="50" max="800" step="10" value="800">
+            </div>
+        </div>
+
+        <div class="buy-layout">
+            <div>
+                <div class="panel panel-head buy-result-head">
+                    <h3 id="buyResultsTitle">Resultats: 6 produits</h3>
+                    <span class="tag" id="buyCartCount">Panier: 0</span>
+                </div>
+                <div class="buy-grid" id="buyGrid">
+                    <article class="buy-card" data-id="p1" data-category="informatique" data-price="420" data-popularity="9">
+                        <img class="buy-card-image" src="https://images.unsplash.com/photo-1517336714739-489689fd1ca8?w=900&q=80&auto=format&fit=crop" alt="Ordinateur portable">
+                        <h4>PC Portable Lenovo IdeaPad</h4>
+                        <span class="meta">16 Go RAM, SSD 512 Go, parfait pour dev.</span>
+                        <div class="buy-card-foot"><strong class="market-price">420 EUR</strong><button class="btn btn-primary buy-add-cart" type="button">Ajouter</button></div>
+                    </article>
+
+                    <article class="buy-card" data-id="p2" data-category="audio" data-price="70" data-popularity="8">
+                        <img class="buy-card-image" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=900&q=80&auto=format&fit=crop" alt="Casque audio">
+                        <h4>Casque Bluetooth Sony</h4>
+                        <span class="meta">Reduction de bruit, etat tres bon.</span>
+                        <div class="buy-card-foot"><strong class="market-price">70 EUR</strong><button class="btn btn-primary buy-add-cart" type="button">Ajouter</button></div>
+                    </article>
+
+                    <article class="buy-card" data-id="p3" data-category="mobilier" data-price="95" data-popularity="7">
+                        <img class="buy-card-image" src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=900&q=80&auto=format&fit=crop" alt="Chaise de bureau">
+                        <h4>Chaise de bureau ergonomique</h4>
+                        <span class="meta">Confortable pour longues sessions de cours.</span>
+                        <div class="buy-card-foot"><strong class="market-price">95 EUR</strong><button class="btn btn-primary buy-add-cart" type="button">Ajouter</button></div>
+                    </article>
+
+                    <article class="buy-card" data-id="p4" data-category="cours" data-price="25" data-popularity="6">
+                        <img class="buy-card-image" src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=900&q=80&auto=format&fit=crop" alt="Livre cours data">
+                        <h4>Lot livres Data & IA</h4>
+                        <span class="meta">4 ouvrages recents, bon etat.</span>
+                        <div class="buy-card-foot"><strong class="market-price">25 EUR</strong><button class="btn btn-primary buy-add-cart" type="button">Ajouter</button></div>
+                    </article>
+
+                    <article class="buy-card" data-id="p5" data-category="informatique" data-price="230" data-popularity="8">
+                        <img class="buy-card-image" src="https://images.unsplash.com/photo-1588508065123-287b28e013da?w=900&q=80&auto=format&fit=crop" alt="Ecran externe">
+                        <h4>Ecran 27 pouces Full HD</h4>
+                        <span class="meta">Ideal pour code, montage ou design.</span>
+                        <div class="buy-card-foot"><strong class="market-price">230 EUR</strong><button class="btn btn-primary buy-add-cart" type="button">Ajouter</button></div>
+                    </article>
+
+                    <article class="buy-card" data-id="p6" data-category="mobilier" data-price="60" data-popularity="5">
+                        <img class="buy-card-image" src="https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=900&q=80&auto=format&fit=crop" alt="Lampe de bureau">
+                        <h4>Pack bureau: lampe + support laptop</h4>
+                        <span class="meta">Equipement pratique pour travailler.</span>
+                        <div class="buy-card-foot"><strong class="market-price">60 EUR</strong><button class="btn btn-primary buy-add-cart" type="button">Ajouter</button></div>
+                    </article>
+                </div>
+            </div>
+
+            <aside class="panel buy-cart">
+                <div class="panel-head">
+                    <h3>Mon panier</h3>
+                    <span class="tag">Achat</span>
+                </div>
+                <div class="buy-cart-list" id="buyCartList">
+                    <p class="meta">Votre panier est vide.</p>
+                </div>
+                <div class="buy-cart-total">Total: <strong id="buyCartTotal">0 EUR</strong></div>
+                <span class="meta buy-checkout-message" id="buyCheckoutMessage"></span>
+                <form id="buyBankForm" class="buy-bank-form" hidden>
+                    <input id="buyCardName" type="text" placeholder="Nom sur la carte" required>
+                    <input id="buyCardNumber" type="text" inputmode="numeric" placeholder="Numero de carte (16 chiffres)" maxlength="19" required>
+                    <div class="inline-2">
+                        <input id="buyCardExpiry" type="text" placeholder="MM/AA" maxlength="5" required>
+                        <input id="buyCardCvc" type="text" inputmode="numeric" placeholder="CVC" maxlength="4" required>
+                    </div>
+                    <button class="btn btn-light" type="submit">Payer les produits</button>
+                </form>
+            </aside>
+        </div>
+    </section>
+
+    <section class="section container" id="profil">
+        <h2>Creation et affichage de profil</h2>
+        <p class="lead">Chaque etudiant peut presenter sa filiere, ses competences et ses centres d'interet.</p>
+        <div class="layout-2">
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Creer un profil</h3>
+                    <span class="tag">Identite</span>
+                </div>
+                <form id="profileForm">
+                    <div class="inline-2">
+                        <input id="profileName" type="text" placeholder="Nom" required>
+                        <input id="profileTrack" type="text" placeholder="Filiere (ex: Data, Dev, 3D)" required>
+                    </div>
+                    <textarea id="profileBio" placeholder="Bio courte" required></textarea>
+                    <button class="btn btn-light" type="submit">Ajouter le profil</button>
+                </form>
+            </div>
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Profils visibles</h3>
+                    <span class="tag">Communaute</span>
+                </div>
+                <div class="profile-list" id="profileList">
+                    <div class="profile-item"><h4>Lina - M1 Data</h4><span class="meta">Passionnee ML, dispo pour projets IA et hackathons.</span></div>
+                    <div class="profile-item"><h4>Yassine - B3 Dev</h4><span class="meta">Front React, UI, recherche mission freelance etudiante.</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section container" id="ynov">
+        <h2>Partie Ynov</h2>
+        <p class="lead">Un espace pour regrouper tous les "trucs Ynov": liens utiles et services ecole.</p>
+        <div class="layout-3 ynov-list">
+            <div class="ynov-item"><h4>Intranet Ynov</h4><span class="meta">Cours, notes, emplois du temps et documents administratifs.</span></div>
+            <div class="ynov-item"><h4>Career Center</h4><span class="meta">Offres de stage, alternance, coaching CV et entretiens.</span></div>
+            <div class="ynov-item"><h4>Support Campus</h4><span class="meta">Tickets techniques, badges, salles, services numeriques.</span></div>
+        </div>
+    </section>
+</main>
+
+<div class="login-modal" id="loginModal" hidden>
+    <div class="login-card panel">
+        <div class="panel-head">
+            <h3>Connexion eleve</h3>
+            <button class="btn btn-light" id="closeLoginBtn" type="button">Fermer</button>
+        </div>
+        <form id="loginForm">
+            <input id="loginName" type="text" placeholder="Nom complet" required>
+            <input id="loginEmail" type="email" placeholder="Email etudiant" required>
+            <input id="loginPromo" type="text" placeholder="Promo (ex: B3 DEV)" required>
+            <input id="loginAvatar" type="url" placeholder="URL photo profil (optionnel)">
+            <button class="btn btn-primary" type="submit">Se connecter</button>
+            <span class="meta" id="loginMessage"></span>
+        </form>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">2026 Ynov Connect - Espace de vie etudiante</div>
+</footer>
+
+<script src="js/data.js?v=20260330b"></script>
+<script src="js/main.js?v=20260330b"></script>
+</body>
+</html>
