@@ -1,6 +1,7 @@
 import os
-import google.generativeai as genai
 from dotenv import load_dotenv
+from google import genai
+from google.genai import types
 
 class GeminiService:
     def __init__(self):
@@ -9,13 +10,38 @@ class GeminiService:
         if not self.api_key:
             raise ValueError("API_KEY_MISSING")
             
-        genai.configure(api_key=self.api_key)
-        self.model = genai.GenerativeModel('gemini-1.5-flash')
+        self.client = genai.Client(api_key=self.api_key)
+        self.model = "gemini-3-flash-preview"
 
     def generer_resume_profil(self, competences):
         prompt = f"Rédige un résumé professionnel court pour un étudiant avec ces compétences : {competences}"
+        
+        contents = [
+            types.Content(
+                role="user",
+                parts=[
+                    types.Part.from_text(text=prompt),
+                ],
+            ),
+        ]
+        
+        tools = [
+            types.Tool(googleSearch=types.GoogleSearch()),
+        ]
+        
+        generate_content_config = types.GenerateContentConfig(
+            thinking_config=types.ThinkingConfig(
+                thinking_level="HIGH",
+            ),
+            tools=tools,
+        )
+
         try:
-            response = self.model.generate_content(prompt)
+            response = self.client.models.generate_content(
+                model=self.model,
+                contents=contents,
+                config=generate_content_config,
+            )
             return response.text
         except Exception as e:
             return str(e)

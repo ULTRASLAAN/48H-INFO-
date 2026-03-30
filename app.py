@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_cors import CORS
 from routes.auth_routes import AuthRoutes
 from routes.feed_routes import FeedRoutes
@@ -15,6 +15,7 @@ class SocialNetworkApp:
         self.app = Flask(__name__)
         CORS(self.app)
         self.setup_blueprints()
+        self.setup_frontend_routes()
 
     def setup_blueprints(self):
         auth_routes = AuthRoutes()
@@ -36,6 +37,11 @@ class SocialNetworkApp:
         self.app.register_blueprint(ai_routes.blueprint)
         self.app.register_blueprint(market_routes.blueprint)
         self.app.register_blueprint(group_routes.blueprint)
+
+    def setup_frontend_routes(self):
+        @self.app.route('/')
+        def index():
+            return render_template('test_api.html')
 
     def run(self):
         self.app.run(debug=True, port=5000)

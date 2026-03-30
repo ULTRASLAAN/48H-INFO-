@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Test API</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background: #f4f4f9; display: flex; flex-direction: column; gap: 20px; }
+@media (min-width: 768px) { body { flex-direction: row; height: 100vh; overflow: hidden; box-sizing: border-box; } }
+.panel { flex: 1; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; }
+.card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+input, button { margin-top: 10px; padding: 12px; width: 100%; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+button { background: #007bff; color: white; border: none; cursor: pointer; font-weight: bold; }
+button:hover { background: #0056b3; }
+#console { background: #1e1e1e; color: #00ff00; padding: 15px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; word-break: break-all; overflow-y: auto; flex: 1; min-height: 300px; }
+</style>
+</head>
+<body>
+
+<div class="panel">
+    <div class="card">
+        <h3>Test Inscription</h3>
+        <input type="text" id="regNom" placeholder="Nom">
+        <input type="text" id="regPrenom" placeholder="Prenom">
+        <input type="email" id="regEmail" placeholder="Email (@ynov.com)">
+        <input type="password" id="regPass" placeholder="Mot de passe">
+        <input type="date" id="regDate">
+        <input type="number" id="regAge" placeholder="Age">
+        <input type="text" id="regCursus" placeholder="Cursus">
+        <button onclick="register()">S'inscrire</button>
+    </div>
+
+    <div class="card">
+        <h3>Test IA (Resumé Profil)</h3>
+        <input type="text" id="iaSkills" placeholder="Competences (ex: Python, SQL)">
+        <button onclick="generateResume()">Generer avec Gemini</button>
+    </div>
+
+    <div class="card">
+        <h3>Test Jobs (Ymatch)</h3>
+        <button onclick="getJobs()">Voir toutes les offres</button>
+    </div>
+</div>
+
+<div id="console">En attente de requete...</div>
+
+<script>
+const API_URL = "/api";
+
+function printLog(data) {
+    document.getElementById('console').textContent = JSON.stringify(data, null, 2);
+}
+
+async function register() {
+    const payload = {
+        nom: document.getElementById('regNom').value,
+        prenom: document.getElementById('regPrenom').value,
+        email: document.getElementById('regEmail').value,
+        password: document.getElementById('regPass').value,
+        date_naissance: document.getElementById('regDate').value,
+        age: document.getElementById('regAge').value,
+        cursus: document.getElementById('regCursus').value
+    };
+    
+    try {
+        const res = await fetch(`${API_URL}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        printLog(data);
+    } catch (e) {
+        printLog({ error: e.message });
+    }
+}
+
+async function generateResume() {
+    const competences = document.getElementById('iaSkills').value;
+    try {
+        const res = await fetch(`${API_URL}/ai/resume`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ competences })
+        });
+        const data = await res.json();
+        printLog(data);
+    } catch (e) {
+        printLog({ error: e.message });
+    }
+}
+
+async function getJobs() {
+    try {
+        const res = await fetch(`${API_URL}/jobs`);
+        const data = await res.json();
+        printLog(data);
+    } catch (e) {
+        printLog({ error: e.message });
+    }
+}
+</script>
+</body>
+</html>
