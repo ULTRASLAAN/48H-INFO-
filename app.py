@@ -44,6 +44,10 @@ class SocialNetworkApp:
     def setup_frontend_routes(self):
         @self.app.route('/')
         def index():
+            return render_template('index.html')
+
+        @self.app.route('/test')
+        def test_api():
             return render_template('test_api.html')
 
     def run(self):

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ynov Connect - Vie Etudiante</title>
-<link rel="stylesheet" href="styles/main.css?v=20260330b">
+<link rel="stylesheet" href="/static/styles/main.css?v=20260330b">
 </head>
 <body>
 <header class="header">
@@ -353,10 +353,8 @@
             <button class="btn btn-light" id="closeLoginBtn" type="button">Fermer</button>
         </div>
         <form id="loginForm">
-            <input id="loginName" type="text" placeholder="Nom complet" required>
-            <input id="loginEmail" type="email" placeholder="Email etudiant" required>
-            <input id="loginPromo" type="text" placeholder="Promo (ex: B3 DEV)" required>
-            <input id="loginAvatar" type="url" placeholder="URL photo profil (optionnel)">
+            <input id="loginEmail" type="email" placeholder="Email etudiant (@ynov.com)" required>
+            <input id="loginPassword" type="password" placeholder="Mot de passe" required>
             <button class="btn btn-primary" type="submit">Se connecter</button>
             <span class="meta" id="loginMessage"></span>
         </form>
@@ -367,7 +365,7 @@
     <div class="container">2026 Ynov Connect - Espace de vie etudiante</div>
 </footer>
 
-<script src="js/data.js?v=20260330b"></script>
-<script src="js/main.js?v=20260330b"></script>
+<script src="/static/js/data.js?v=20260330b"></script>
+<script type="module" src="/static/js/main.js"></script>
 </body>
 </html>
