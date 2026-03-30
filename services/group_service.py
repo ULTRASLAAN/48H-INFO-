@@ -1,19 +1,34 @@
+from services.db_connection import DatabaseConnection
+
 class GroupService:
     def __init__(self):
-        self.groups_mock_db = []
-        self.group_id_counter = 1
+        self.db = DatabaseConnection()
 
     def create_group(self, creator_id, name, description):
-        new_group = {
-            "id": self.group_id_counter,
-            "creator_id": creator_id,
-            "name": name,
-            "description": description,
-            "members": [creator_id]
-        }
-        self.groups_mock_db.append(new_group)
-        self.group_id_counter += 1
-        return new_group
+        conn = self.db.get_connection()
+        cursor = conn.cursor(dictionary=True)
+        try:
+            query = "INSERT INTO groups (name, description) VALUES (%s, %s)"
+            cursor.execute(query, (name, description))
+            conn.commit()
+            group_id = cursor.lastrowid
+            
+            member_query = "INSERT INTO group_members (group_id, user_id, role) VALUES (%s, %s, 'admin')"
+            cursor.execute(member_query, (group_id, creator_id))
+            conn.commit()
+            
+            cursor.execute("SELECT * FROM groups WHERE id = %s", (group_id,))
+            return cursor.fetchone()
+        finally:
+            cursor.close()
+            conn.close()
 
     def get_all_groups(self):
-        return self.groups_mock_db
+        conn = self.db.get_connection()
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("SELECT * FROM groups ORDER BY created_at DESC")
+            return cursor.fetchall()
+        finally:
+            cursor.close()
+            conn.close()

@@ -1,10 +1,15 @@
+from services.db_connection import DatabaseConnection
+
 class NewsService:
     def __init__(self):
-        self.news_mock_db = [
-            {"id": 1, "title": "Challenge 48H", "category": "Hackathon"},
-            {"id": 2, "title": "Evenement sportif du BDS", "category": "Sport"},
-            {"id": 3, "title": "Soiree d'integration BDE", "category": "BDE"}
-        ]
+        self.db = DatabaseConnection()
 
     def get_all_news(self):
-        return self.news_mock_db
+        conn = self.db.get_connection()
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("SELECT * FROM news ORDER BY created_at DESC")
+            return cursor.fetchall()
+        finally:
+            cursor.close()
+            conn.close()

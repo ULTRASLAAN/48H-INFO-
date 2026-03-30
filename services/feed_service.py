@@ -1,20 +1,30 @@
-import datetime
+from services.db_connection import DatabaseConnection
 
 class FeedService:
     def __init__(self):
-        self.posts_mock_db = []
-        self.post_id_counter = 1
+        self.db = DatabaseConnection()
 
     def create_post(self, user_id, content):
-        new_post = {
-            "id": self.post_id_counter,
-            "user_id": user_id,
-            "content": content,
-            "timestamp": datetime.datetime.now().isoformat()
-        }
-        self.posts_mock_db.append(new_post)
-        self.post_id_counter += 1
-        return new_post
+        conn = self.db.get_connection()
+        cursor = conn.cursor(dictionary=True)
+        try:
+            query = "INSERT INTO posts (user_id, content) VALUES (%s, %s)"
+            cursor.execute(query, (user_id, content))
+            conn.commit()
+            post_id = cursor.lastrowid
+            
+            cursor.execute("SELECT * FROM posts WHERE id = %s", (post_id,))
+            return cursor.fetchone()
+        finally:
+            cursor.close()
+            conn.close()
 
     def get_all_posts(self):
-        return sorted(self.posts_mock_db, key=lambda x: x['timestamp'], reverse=True)
+        conn = self.db.get_connection()
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("SELECT * FROM posts ORDER BY created_at DESC")
+            return cursor.fetchall()
+        finally:
+            cursor.close()
+            conn.close()

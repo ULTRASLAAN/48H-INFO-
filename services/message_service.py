@@ -1,21 +1,31 @@
-import datetime
+from services.db_connection import DatabaseConnection
 
 class MessageService:
     def __init__(self):
-        self.messages_mock_db = []
-        self.message_id_counter = 1
+        self.db = DatabaseConnection()
 
     def send_message(self, sender_id, receiver_id, content):
-        new_message = {
-            "id": self.message_id_counter,
-            "sender_id": sender_id,
-            "receiver_id": receiver_id,
-            "content": content,
-            "timestamp": datetime.datetime.now().isoformat()
-        }
-        self.messages_mock_db.append(new_message)
-        self.message_id_counter += 1
-        return new_message
+        conn = self.db.get_connection()
+        cursor = conn.cursor(dictionary=True)
+        try:
+            query = "INSERT INTO messages (sender_id, receiver_id, content) VALUES (%s, %s, %s)"
+            cursor.execute(query, (sender_id, receiver_id, content))
+            conn.commit()
+            msg_id = cursor.lastrowid
+            
+            cursor.execute("SELECT * FROM messages WHERE id = %s", (msg_id,))
+            return cursor.fetchone()
+        finally:
+            cursor.close()
+            conn.close()
 
     def get_messages_for_user(self, user_id):
-        return [m for m in self.messages_mock_db if m['receiver_id'] == user_id or m['sender_id'] == user_id]
+        conn = self.db.get_connection()
+        cursor = conn.cursor(dictionary=True)
+        try:
+            query = "SELECT * FROM messages WHERE receiver_id = %s OR sender_id = %s ORDER BY sent_at ASC"
+            cursor.execute(query, (user_id, user_id))
+            return cursor.fetchall()
+        finally:
+            cursor.close()
+            conn.close()

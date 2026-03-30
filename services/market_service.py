@@ -1,19 +1,30 @@
+from services.db_connection import DatabaseConnection
+
 class MarketService:
     def __init__(self):
-        self.products_mock_db = []
-        self.product_id_counter = 1
+        self.db = DatabaseConnection()
 
     def create_product(self, seller_id, title, description, price):
-        new_product = {
-            "id": self.product_id_counter,
-            "seller_id": seller_id,
-            "title": title,
-            "description": description,
-            "price": price
-        }
-        self.products_mock_db.append(new_product)
-        self.product_id_counter += 1
-        return new_product
+        conn = self.db.get_connection()
+        cursor = conn.cursor(dictionary=True)
+        try:
+            query = "INSERT INTO products (seller_id, title, description, price) VALUES (%s, %s, %s, %s)"
+            cursor.execute(query, (seller_id, title, description, price))
+            conn.commit()
+            prod_id = cursor.lastrowid
+            
+            cursor.execute("SELECT * FROM products WHERE id = %s", (prod_id,))
+            return cursor.fetchone()
+        finally:
+            cursor.close()
+            conn.close()
 
     def get_all_products(self):
-        return self.products_mock_db
+        conn = self.db.get_connection()
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("SELECT * FROM products ORDER BY created_at DESC")
+            return cursor.fetchall()
+        finally:
+            cursor.close()
+            conn.close()
