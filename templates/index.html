@@ -243,6 +243,27 @@
         </div>
     </div>
 
+    <div id="editProductModal" class="modal-overlay">
+        <div class="modal-card small">
+            <h3 style="margin-top:0;">Modifier l'annonce</h3>
+            <input type="hidden" id="editProductId">
+            
+            <label style="font-size:12px; font-weight:bold;">Titre :</label>
+            <input type="text" id="editProductTitle" class="m-input" style="margin-bottom:15px;">
+            
+            <label style="font-size:12px; font-weight:bold;">Prix (€) :</label>
+            <input type="number" id="editProductPrice" class="m-input" style="margin-bottom:15px;">
+            
+            <label style="font-size:12px; font-weight:bold;">Description :</label>
+            <textarea id="editProductDesc" class="m-input" style="margin-bottom:20px;"></textarea>
+            
+            <div style="display:flex; gap:10px;">
+                <button onclick="saveProductEdit()" class="btn btn-primary" style="flex:1;">Sauvegarder</button>
+                <button onclick="document.getElementById('editProductModal').style.display='none'" class="btn btn-light">Annuler</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="/static/js/main.js"></script>
 </body>
 </html>

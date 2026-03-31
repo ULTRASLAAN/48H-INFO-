@@ -1,5 +1,6 @@
 CREATE DATABASE IF NOT EXISTS Ybase;
 USE Ybase;
+
 -- =====================================================
 -- 1. UTILISATEURS
 -- =====================================================
@@ -14,6 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
     skills TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 -- =====================================================
 -- 2. MESSAGERIE (AMIS, GROUPES & GÉNÉRAL)
 -- =====================================================
@@ -21,11 +23,12 @@ CREATE TABLE IF NOT EXISTS friends (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     friend_id INT NOT NULL,
-    status VARCHAR(20) DEFAULT 'pending',
+    status VARCHAR(20) DEFAULT 'pending', -- Ajouté pour gérer les demandes d'amis
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
 CREATE TABLE IF NOT EXISTS chat_groups (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -34,6 +37,7 @@ CREATE TABLE IF NOT EXISTS chat_groups (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );
+
 CREATE TABLE IF NOT EXISTS group_members (
     group_id INT NOT NULL,
     user_id INT NOT NULL,
@@ -41,15 +45,17 @@ CREATE TABLE IF NOT EXISTS group_members (
     FOREIGN KEY (group_id) REFERENCES chat_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
 CREATE TABLE IF NOT EXISTS messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sender_id INT NOT NULL,
-    group_id INT DEFAULT 0,
-    receiver_id INT DEFAULT NULL,
+    group_id INT DEFAULT 0, -- 0 = Chat Général, sinon ID du groupe
+    receiver_id INT DEFAULT NULL, -- Utilisé pour les messages privés (DMs entre amis)
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
 -- =====================================================
 -- 3. MARKETPLACE (ACHAT / VENTE / PANIER)
 -- =====================================================
@@ -64,6 +70,7 @@ CREATE TABLE IF NOT EXISTS products (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
 CREATE TABLE IF NOT EXISTS cart (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -72,6 +79,7 @@ CREATE TABLE IF NOT EXISTS cart (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
+
 -- =====================================================
 -- 4. ACCUEIL (FEED & NEWS)
 -- =====================================================
@@ -82,12 +90,14 @@ CREATE TABLE IF NOT EXISTS posts (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
 CREATE TABLE IF NOT EXISTS news (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     content TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 -- =====================================================
 -- 5. YMATCH (STAGES & ALTERNANCES)
 -- =====================================================
@@ -99,13 +109,15 @@ CREATE TABLE IF NOT EXISTS jobs (
     target_cursus VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 -- =====================================================
--- DONNÉES DE TEST
+-- DONNÉES DE TEST INITIALES
 -- =====================================================
 INSERT INTO news (title, content) VALUES 
 ('Challenge 48H', 'Le Hackathon Ynov bat son plein ! Courage aux équipes.'), 
 ('BDE Info', 'Vente de pulls Ynov demain au foyer à partir de 12h.'), 
 ('Workshop IA', 'Conférence sur Gemini 3 Flash ce jeudi en amphi A.');
+
 INSERT INTO jobs (title, company, description, target_cursus) VALUES 
 ('Développeur Web', 'Avanade', 'Alternance en React/NodeJS.', 'Informatique'), 
 ('Analyste SOC', 'Orange Cyber', 'Stage 6 mois en surveillance réseau.', 'Cybersécurité'), 
