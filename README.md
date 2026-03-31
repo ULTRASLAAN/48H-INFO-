@@ -196,17 +196,16 @@ pip install -r requirements.txt
 
 ---
 
-### 4. Variables d’environnement
+### 4. .env
 
-- Vérifier :
+- Créer un fichier .env et y ajouter la clé gemini:
   ```
-  routes/db_config.py
-  ```
-  (host, user, password)
-
-- Ajouter la clé API Google Gemini dans :
-  ```
-  routes/ai_routes.py
+  .env :
+    GEMINI_API_KEY=VOTRE_CLE_GEMINI
+    DB_HOST=localhost
+    DB_USER=root
+    DB_PASSWORD=
+    DB_NAME=Ybase
   ```
 
 ---
