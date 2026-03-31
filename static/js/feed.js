@@ -11,7 +11,6 @@ export function initFeed() {
     loadPosts();
 
     // 2. Verifier si on doit afficher le formulaire de publication
-    // (Utile si on arrive sur la page en etant deja connecte via localStorage)
     if (currentUser && postForm) {
         postForm.style.display = 'block';
     }
@@ -23,7 +22,7 @@ export function initFeed() {
 
             // Securite : On verifie qu'Armand est bien connecte
             if (!currentUser) {
-                alert("Vous devez etre connecte pour publier.");
+                showToast("Vous devez etre connecte pour publier.", "error");
                 return;
             }
 
@@ -43,14 +42,16 @@ export function initFeed() {
                 if (res.ok) {
                     // On vide le champ texte
                     document.getElementById('postMessage').value = '';
+                    showToast("Message publie avec succes !");
                     // On recharge la liste pour voir le nouveau message en haut
                     loadPosts();
                 } else {
                     const data = await res.json();
-                    alert("Erreur : " + (data.erreur || "Impossible de publier"));
+                    showToast("Erreur : " + (data.erreur || "Impossible de publier"), "error");
                 }
             } catch (err) {
                 console.error("Erreur reseau feed:", err);
+                showToast("Erreur de connexion au serveur.", "error");
             }
         };
     }

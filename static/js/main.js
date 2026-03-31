@@ -7,8 +7,6 @@ import { initYmatch } from './ymatch.js';
 import { initProfile } from './profile.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Demarrage des modules...");
-    
     initStudentAccount();
     initFeed();
     initNews();
@@ -18,15 +16,55 @@ document.addEventListener('DOMContentLoaded', () => {
     initProfile();
 });
 
+// SYSTEME DE NOTIFICATIONS GLOBAL
+window.showToast = function(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerText = message;
+
+    container.appendChild(toast);
+
+    setTimeout(() => toast.classList.add('show'), 10);
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+};
+
+// SYSTEME DE CONFIRMATION GLOBAL
+window.showConfirm = function(message) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('confirmModal');
+        const msgEl = document.getElementById('confirmMessage');
+        const btnYes = document.getElementById('btnConfirmYes');
+        const btnNo = document.getElementById('btnConfirmNo');
+
+        if (!modal) return resolve(false);
+
+        msgEl.innerText = message;
+        modal.style.display = 'flex';
+
+        btnYes.onclick = () => {
+            modal.style.display = 'none';
+            resolve(true);
+        };
+
+        btnNo.onclick = () => {
+            modal.style.display = 'none';
+            resolve(false);
+        };
+    });
+};
+
 window.showPage = function(pageId) {
-    // 1. Cacher toutes les sections
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    
-    // 2. Afficher la bonne section
     const target = document.getElementById(pageId);
     if (target) target.classList.add('active');
 
-    // 3. Mettre a jour les liens du menu (le trait vert)
     document.querySelectorAll('.nav a').forEach(a => {
         if (a.getAttribute('onclick') && a.getAttribute('onclick').includes(`'${pageId}'`)) {
             a.classList.add('active');

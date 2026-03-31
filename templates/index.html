@@ -264,6 +264,18 @@
         </div>
     </div>
 
+    <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px;"></div>
+
+    <div id="confirmModal" class="modal-overlay" style="display: none;">
+        <div class="modal-card small" style="text-align: center; width: 350px;">
+            <h3 id="confirmMessage" style="margin-top:0;">Etes-vous sur ?</h3>
+            <div style="display:flex; gap:10px; justify-content:center; margin-top: 20px;">
+                <button id="btnConfirmYes" class="btn btn-primary" style="flex:1;">Oui</button>
+                <button id="btnConfirmNo" class="btn btn-light" style="flex:1;">Non</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="/static/js/main.js"></script>
 </body>
 </html>

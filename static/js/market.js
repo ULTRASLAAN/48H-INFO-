@@ -8,7 +8,10 @@ export function initMarketplace() {
     if (venteForm) {
         venteForm.onsubmit = async (e) => {
             e.preventDefault();
-            if (!currentUser) return alert("Connectez-vous pour vendre.");
+            if (!currentUser) {
+                window.showToast("Connectez-vous pour vendre.", "error");
+                return;
+            }
 
             const formData = new FormData();
             formData.append('title', document.getElementById('marketVenteTitle').value);
@@ -17,16 +20,23 @@ export function initMarketplace() {
             formData.append('seller_id', currentUser.id);
             formData.append('image', document.getElementById('marketVenteImg').files[0]);
 
-            const res = await fetch('/api/products', {
-                method: 'POST',
-                body: formData
-            });
+            try {
+                const res = await fetch('/api/products', {
+                    method: 'POST',
+                    body: formData
+                });
 
-            if (res.ok) {
-                alert("Annonce publiée !");
-                venteForm.reset();
-                window.showPage('achat');
-                loadProducts();
+                if (res.ok) {
+                    window.showToast("Annonce publiee !");
+                    venteForm.reset();
+                    window.showPage('achat');
+                    loadProducts();
+                } else {
+                    window.showToast("Erreur lors de la publication.", "error");
+                }
+            } catch (err) {
+                console.error(err);
+                window.showToast("Erreur de connexion.", "error");
             }
         };
     }
@@ -47,19 +57,16 @@ export function initMarketplace() {
         }
 
         buyGrid.innerHTML = data.products.map(p => {
-            // VÉRIFICATION DES DROITS SÉPARÉE
             const isSeller = currentUser && currentUser.id === p.seller_id;
             const isAdmin = currentUser && currentUser.role === 'admin';
             
-            const canEdit = isSeller; // SEUL le vendeur peut modifier
-            const canDelete = isSeller || isAdmin; // Vendeur OU Admin pour supprimer
+            const canEdit = isSeller; 
+            const canDelete = isSeller || isAdmin; 
             
-            // Construction dynamique des boutons
             let controlButtons = '';
             if (canDelete) {
                 controlButtons += `<div style="display:flex; gap:5px; margin-top:10px;">`;
                 
-                // On n'ajoute le bouton modifier QUE si c'est le vendeur
                 if (canEdit) {
                     controlButtons += `
                         <button onclick="openEditProductModal(${p.id}, '${p.title.replace(/'/g, "\\'")}', ${p.price}, '${p.description.replace(/'/g, "\\'")}')" 
@@ -67,7 +74,6 @@ export function initMarketplace() {
                     `;
                 }
                 
-                // Le bouton supprimer est là pour le vendeur OU l'admin
                 controlButtons += `
                         <button onclick="deleteProduct(${p.id})" 
                                 style="flex:1; background:#ffebeb; color:red; border:1px solid #ffcccc; padding:8px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:12px;">Supprimer</button>
@@ -76,7 +82,7 @@ export function initMarketplace() {
 
             return `
             <div class="panel" style="padding:0; overflow:hidden; position:relative;">
-                ${isAdmin && !isSeller ? '<span style="position:absolute; top:10px; right:10px; background:red; color:white; font-size:10px; padding:2px 6px; border-radius:5px; font-weight:bold;">MODÉRATION</span>' : ''}
+                ${isAdmin && !isSeller ? '<span style="position:absolute; top:10px; right:10px; background:red; color:white; font-size:10px; padding:2px 6px; border-radius:5px; font-weight:bold;">MODERATION</span>' : ''}
                 <img src="/static/uploads/${p.image_url}" style="width:100%; height:180px; object-fit:cover; background:#eee;">
                 <div style="padding:15px;">
                     <h4 style="margin:0">${p.title}</h4>
@@ -84,7 +90,7 @@ export function initMarketplace() {
                     <p style="font-size:12px; color:#666; height:40px; overflow:hidden;">${p.description}</p>
                     <small>Vendeur : ${p.prenom}</small>
                     
-                    <button class="pill-btn" style="width:100%; margin-top:10px; padding:10px; font-size:14px; background:var(--ink); color:var(--brand);">💬 Contacter</button>
+                    <button class="pill-btn" style="width:100%; margin-top:10px; padding:10px; font-size:14px; background:var(--ink); color:var(--brand);" onclick="window.showToast('Fonctionnalite bientot disponible', 'info')">Contacter</button>
                     
                     ${controlButtons}
                 </div>
@@ -94,16 +100,18 @@ export function initMarketplace() {
 
     // 3. SUPPRIMER UN PRODUIT
     window.deleteProduct = async (productId) => {
-        if (!confirm("Voulez-vous vraiment supprimer cette annonce ?")) return;
+        const confirmed = await window.showConfirm("Voulez-vous vraiment supprimer cette annonce ?");
+        if (!confirmed) return;
         
         const res = await fetch(`/api/products/${productId}?user_id=${currentUser.id}&user_role=${currentUser.role}`, {
             method: 'DELETE'
         });
         
         if (res.ok) {
+            window.showToast("Annonce supprimee.");
             loadProducts();
         } else {
-            alert("Erreur lors de la suppression.");
+            window.showToast("Erreur lors de la suppression.", "error");
         }
     };
 
@@ -121,7 +129,7 @@ export function initMarketplace() {
         const id = document.getElementById('editProductId').value;
         const data = {
             user_id: currentUser.id,
-            user_role: currentUser.role, // Pas utile côté serveur maintenant qu'on a bloqué l'admin, mais on le laisse pour la forme
+            user_role: currentUser.role, 
             title: document.getElementById('editProductTitle').value,
             price: document.getElementById('editProductPrice').value,
             description: document.getElementById('editProductDesc').value
@@ -135,10 +143,11 @@ export function initMarketplace() {
 
         if (res.ok) {
             document.getElementById('editProductModal').style.display = 'none';
+            window.showToast("Annonce mise a jour !");
             loadProducts();
         } else {
             const errorData = await res.json();
-            alert(errorData.erreur || "Erreur lors de la modification.");
+            window.showToast(errorData.erreur || "Erreur lors de la modification.", "error");
         }
     };
 

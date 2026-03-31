@@ -24,12 +24,11 @@ export async function initYmatch() {
                 <p style="font-size:14px; margin:10px 0;">${job.description}</p>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span class="tag">${job.target_cursus || 'Tous cursus'}</span>
-                    <button class="btn btn-primary btn-sm" onclick="alert('Candidature envoyée !')">Postuler</button>
+                    <button class="btn btn-primary btn-sm" onclick="showToast('Candidature envoyee avec succes !')">Postuler</button>
                 </div>
             </div>
         `).join('');
     }
 
-    // Lancement
     loadJobs();
 }

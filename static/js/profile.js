@@ -1,22 +1,21 @@
 import { currentUser } from './auth.js';
 
 export function initProfile() {
-    // Les conteneurs des états
+    // Les conteneurs des etats
     const viewState = document.getElementById('profileViewState');
     const editState = document.getElementById('profileEditForm');
     
     // Les boutons de bascule
     const btnSwitchToEdit = document.getElementById('btnSwitchToEdit');
     const btnCancelEdit = document.getElementById('btnCancelEdit');
-    const btnLogout = document.getElementById('btnLogout');
 
-    // Les éléments de la vue (Lecture)
+    // Les elements de la vue (Lecture)
     const viewFullName = document.getElementById('viewFullName');
     const viewCursus = document.getElementById('viewCursus');
     const viewBio = document.getElementById('viewBio');
     const viewSkills = document.getElementById('viewSkills');
 
-    // Les inputs de l'édition
+    // Les inputs de l'edition
     const editPrenom = document.getElementById('editPrenom');
     const editNom = document.getElementById('editNom');
     const editCursus = document.getElementById('editCursus');
@@ -27,13 +26,13 @@ export function initProfile() {
     const btnScanCV = document.getElementById('btnScanCV');
     const editCV = document.getElementById('editCV');
 
-    // 1. FONCTION POUR METTRE À JOUR L'AFFICHAGE LECTURE
+    // 1. FONCTION POUR METTRE A JOUR L'AFFICHAGE LECTURE
     function updateView() {
         if (!currentUser) return;
         
         viewFullName.textContent = `${currentUser.prenom || ''} ${currentUser.nom || ''}`;
-        viewCursus.textContent = currentUser.cursus || 'Étudiant Ynov';
-        viewBio.textContent = currentUser.bio || "Aucune bio renseignée.";
+        viewCursus.textContent = currentUser.cursus || 'Etudiant Ynov';
+        viewBio.textContent = currentUser.bio || "Aucune bio renseignee.";
         
         if (currentUser.skills) {
             const rawSkills = currentUser.skills.replace(/-/g, '').split(/,|\n/).map(s => s.trim()).filter(s => s.length > 0);
@@ -41,7 +40,7 @@ export function initProfile() {
                 `<span style="background:var(--brand); color:var(--ink); padding:4px 10px; border-radius:50px; font-size:12px; font-weight:bold;">${skill}</span>`
             ).join('');
         } else {
-            viewSkills.innerHTML = '<span style="color:var(--soft); font-size:12px;">Aucune compétence scannée.</span>';
+            viewSkills.innerHTML = '<span style="color:var(--soft); font-size:12px;">Aucune competence scannee.</span>';
         }
 
         editPrenom.value = currentUser.prenom || '';
@@ -51,7 +50,7 @@ export function initProfile() {
         editSkills.value = currentUser.skills || '';
     }
 
-    // 2. BASCULES D'ÉTAT
+    // 2. BASCULES D'ETAT
     if (btnSwitchToEdit) {
         btnSwitchToEdit.onclick = () => {
             viewState.style.display = 'none';
@@ -102,24 +101,31 @@ export function initProfile() {
                     updateView();
                     
                     document.getElementById('accountName').textContent = currentUser.prenom;
+                    window.showToast("Profil mis a jour avec succes");
                 } else {
-                    alert("Erreur lors de la mise à jour");
+                    window.showToast("Erreur lors de la mise a jour", "error");
                 }
-            } catch (err) { console.error("Erreur de mise à jour:", err); }
+            } catch (err) { 
+                console.error("Erreur de mise a jour:", err);
+                window.showToast("Erreur de connexion au serveur", "error");
+            }
         };
     }
 
     // 4. SCAN DU CV VIA GEMINI
     if (btnScanCV && editCV) {
         btnScanCV.onclick = async () => {
-            if (!editCV.files.length) return alert("Veuillez sélectionner un CV.");
+            if (!editCV.files.length) {
+                window.showToast("Veuillez selectionner un CV.", "error");
+                return;
+            }
             
             const file = editCV.files[0];
             const reader = new FileReader();
 
             reader.onload = async (e) => {
                 const base64Data = e.target.result.split(',')[1];
-                btnScanCV.innerHTML = "⏳ Analyse Gemini en cours...";
+                btnScanCV.innerHTML = "Analyse Gemini en cours...";
                 btnScanCV.disabled = true;
 
                 try {
@@ -133,13 +139,18 @@ export function initProfile() {
                     if (res.ok) {
                         const formattedList = data.skills.split(',').map(s => `- ${s.trim()}`).join('\n');
                         if (editSkills) editSkills.value = formattedList;
-                        btnScanCV.innerHTML = "✅ CV Analysé avec succès !";
+                        btnScanCV.innerHTML = "CV Analyse avec succes";
+                        window.showToast("Analyse du CV terminee");
                     } else {
-                        alert("Erreur IA: " + data.erreur);
-                        btnScanCV.innerHTML = "✨ Scanner mon CV avec Gemini";
+                        window.showToast("Erreur IA: " + data.erreur, "error");
+                        btnScanCV.innerHTML = "Scanner mon CV avec Gemini";
                     }
-                } catch (err) { console.error(err); } 
-                finally { btnScanCV.disabled = false; }
+                } catch (err) { 
+                    console.error(err);
+                    window.showToast("Erreur lors de la communication avec l'IA", "error");
+                } finally { 
+                    btnScanCV.disabled = false; 
+                }
             };
             reader.readAsDataURL(file);
         };
