@@ -13,17 +13,18 @@ CREATE TABLE IF NOT EXISTS users (
     cursus VARCHAR(100),
     bio TEXT,
     skills TEXT,
+    role VARCHAR(20) DEFAULT 'user', -- Ajout de la gestion des roles (admin/user)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- =====================================================
--- 2. MESSAGERIE (AMIS, GROUPES & GÉNÉRAL)
+-- 2. MESSAGERIE (AMIS, GROUPES & GENERAL)
 -- =====================================================
 CREATE TABLE IF NOT EXISTS friends (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     friend_id INT NOT NULL,
-    status VARCHAR(20) DEFAULT 'pending', -- Ajouté pour gérer les demandes d'amis
+    status VARCHAR(20) DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE
@@ -49,15 +50,15 @@ CREATE TABLE IF NOT EXISTS group_members (
 CREATE TABLE IF NOT EXISTS messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sender_id INT NOT NULL,
-    group_id INT DEFAULT 0, -- 0 = Chat Général, sinon ID du groupe
-    receiver_id INT DEFAULT NULL, -- Utilisé pour les messages privés (DMs entre amis)
+    group_id INT DEFAULT 0, -- 0 = Chat General, sinon ID du groupe
+    receiver_id INT DEFAULT NULL, -- Utilise pour les messages prives
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- =====================================================
--- 3. MARKETPLACE (ACHAT / VENTE / PANIER)
+-- 3. MARKETPLACE (ACHAT / VENTE)
 -- =====================================================
 CREATE TABLE IF NOT EXISTS products (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -69,15 +70,6 @@ CREATE TABLE IF NOT EXISTS products (
     status VARCHAR(20) DEFAULT 'available',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS cart (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    product_id INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
 -- =====================================================
@@ -111,14 +103,14 @@ CREATE TABLE IF NOT EXISTS jobs (
 );
 
 -- =====================================================
--- DONNÉES DE TEST INITIALES
+-- DONNEES DE TEST INITIALES
 -- =====================================================
 INSERT INTO news (title, content) VALUES 
-('Challenge 48H', 'Le Hackathon Ynov bat son plein ! Courage aux équipes.'), 
-('BDE Info', 'Vente de pulls Ynov demain au foyer à partir de 12h.'), 
-('Workshop IA', 'Conférence sur Gemini 3 Flash ce jeudi en amphi A.');
+('Challenge 48H', 'Le Hackathon Ynov bat son plein ! Courage aux equipes.'), 
+('BDE Info', 'Vente de pulls Ynov demain au foyer a partir de 12h.'), 
+('Workshop IA', 'Conference sur Gemini 3 Flash ce jeudi en amphi A.');
 
 INSERT INTO jobs (title, company, description, target_cursus) VALUES 
-('Développeur Web', 'Avanade', 'Alternance en React/NodeJS.', 'Informatique'), 
-('Analyste SOC', 'Orange Cyber', 'Stage 6 mois en surveillance réseau.', 'Cybersécurité'), 
+('Developpeur Web', 'Avanade', 'Alternance en React/NodeJS.', 'Informatique'), 
+('Analyste SOC', 'Orange Cyber', 'Stage 6 mois en surveillance reseau.', 'Cybersecurite'), 
 ('UX Designer', 'Ubisoft', 'Stage assistant sur une interface de jeu.', 'Design');
