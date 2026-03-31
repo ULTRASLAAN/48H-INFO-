@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     cursus VARCHAR(100),
     bio TEXT,
+    skills TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 -- =====================================================
@@ -20,6 +21,7 @@ CREATE TABLE IF NOT EXISTS friends (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     friend_id INT NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE
@@ -42,25 +44,33 @@ CREATE TABLE IF NOT EXISTS group_members (
 CREATE TABLE IF NOT EXISTS messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sender_id INT NOT NULL,
-    group_id INT DEFAULT 0, -- 0 = Chat Général, sinon ID du groupe
-    receiver_id INT DEFAULT NULL, -- Utilisé pour les messages privés (amis)
+    group_id INT DEFAULT 0,
+    receiver_id INT DEFAULT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
 );
 -- =====================================================
--- 3. MARKETPLACE (ACHAT / VENTE)
+-- 3. MARKETPLACE (ACHAT / VENTE / PANIER)
 -- =====================================================
 CREATE TABLE IF NOT EXISTS products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     description TEXT,
     price DECIMAL(10,2) NOT NULL,
-    image_url VARCHAR(255) DEFAULT 'default.jpg', -- Pour l'upload d'images
+    image_url VARCHAR(255) DEFAULT 'default.jpg',
     seller_id INT NOT NULL,
     status VARCHAR(20) DEFAULT 'available',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS cart (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    product_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 -- =====================================================
 -- 4. ACCUEIL (FEED & NEWS)

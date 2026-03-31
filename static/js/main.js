@@ -4,20 +4,20 @@ import { initNews } from './news.js';
 import { initChat } from './chat.js';
 import { initMarketplace } from './market.js';
 import { initYmatch } from './ymatch.js';
+import { initProfile } from './profile.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Demarrage des modules...");
     
-    // On lance tout
     initStudentAccount();
     initFeed();
     initNews();
     initChat();
     initMarketplace();
     initYmatch();
+    initProfile();
 });
 
-// GERE LE CHANGEMENT DE PAGE ET LE STYLE DU MENU
 window.showPage = function(pageId) {
     // 1. Cacher toutes les sections
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));

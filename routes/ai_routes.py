@@ -8,13 +8,11 @@ class AIRoutes:
         self.register_routes()
 
     def register_routes(self):
-        @self.blueprint.route('/api/ai/resume', methods=['POST'])
-        def generate_resume():
-            data = request.get_json()
-            if not data or 'competences' not in data:
-                return jsonify({"erreur": "Veuillez fournir des competences"}), 400
+        @self.blueprint.route('/api/ai/scan-cv', methods=['POST'])
+        def scan_cv():
+            data = request.json
+            if not data or 'file_b64' not in data:
+                return jsonify({"erreur": "Fichier manquant"}), 400
                 
-            competences = data['competences']
-            resume = self.gemini_service.generer_resume_profil(competences)
-            
-            return jsonify({"resume": resume}), 200
+            skills = self.gemini_service.extraire_competences(data['file_b64'], data['mime_type'])
+            return jsonify({"skills": skills}), 200
