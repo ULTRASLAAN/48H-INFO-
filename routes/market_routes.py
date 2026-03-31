@@ -1,28 +1,46 @@
+import os
 from flask import Blueprint, request, jsonify
-from services.market_service import MarketService
+from werkzeug.utils import secure_filename
+from .db_config import get_db_connection
 
 class MarketRoutes:
     def __init__(self):
         self.blueprint = Blueprint('market', __name__)
-        self.market_service = MarketService()
-        self.register_routes()
+        self.setup_routes()
 
-    def register_routes(self):
-        @self.blueprint.route('/api/market', methods=['GET'])
+    def setup_routes(self):
+        @self.blueprint.route('/api/products', methods=['GET'])
         def get_products():
-            products = self.market_service.get_all_products()
-            return jsonify({"products": products}), 200
+            db = get_db_connection()
+            cursor = db.cursor(dictionary=True)
+            query = "SELECT p.*, u.prenom FROM products p JOIN users u ON p.seller_id = u.id ORDER BY p.id DESC"
+            cursor.execute(query)
+            products = cursor.fetchall()
+            db.close()
+            return jsonify({"products": products})
 
-        @self.blueprint.route('/api/market', methods=['POST'])
-        def create_product():
-            data = request.get_json()
-            if not data or 'seller_id' not in data or 'title' not in data or 'price' not in data:
-                return jsonify({"erreur": "Donnees manquantes"}), 400
-            
-            product = self.market_service.create_product(
-                data['seller_id'], 
-                data['title'], 
-                data.get('description', ''), 
-                data['price']
-            )
-            return jsonify({"message": "Produit ajoute", "product": product}), 201
+        @self.blueprint.route('/api/products', methods=['POST'])
+        def add_product():
+            try:
+                title = request.form.get('title')
+                price = request.form.get('price')
+                description = request.form.get('description')
+                seller_id = request.form.get('seller_id')
+                file = request.files.get('image')
+
+                filename = "default.jpg"
+                if file:
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join('static/uploads', filename))
+
+                db = get_db_connection()
+                cursor = db.cursor()
+                cursor.execute(
+                    "INSERT INTO products (title, price, description, seller_id, image_url) VALUES (%s, %s, %s, %s, %s)",
+                    (title, price, description, seller_id, filename)
+                )
+                db.commit()
+                db.close()
+                return jsonify({"status": "ok"}), 201
+            except Exception as e:
+                return jsonify({"erreur": str(e)}), 500
